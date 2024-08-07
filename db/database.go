@@ -3,25 +3,48 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"os"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
 // Connect handles connection to PostgreSQL, database creation, and table creation
 func Connect() (*sql.DB, error) {
 
+	// // Initial connection string for the default database (usually `postgres`)
+	// connStr := "postgresql://postgres:1234@localhost:5432/postgres?sslmode=disable"
+
+	// // Connect to the default database
+	// db, err := sql.Open("postgres", connStr)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// defer db.Close() // Close the initial connection to the default database
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
+	// Get environment variables
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbSSLMode := os.Getenv("DB_SSLMODE")
+
 	// Initial connection string for the default database (usually `postgres`)
-	connStr := "postgresql://postgres:1234@localhost:5432/postgres?sslmode=disable"
+	connStr := fmt.Sprintf("postgresql://%s:%s@%s:%s/postgres?sslmode=%s", dbUser, dbPassword, dbHost, dbPort, dbSSLMode)
 
 	// Connect to the default database
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, err
 	}
-	defer db.Close() // Close the initial connection to the default database
-
+	defer db.Close()
 	// Create database if it does not exist
-	dbName := "vehiclemandb"
 
 	var dbExists bool
 	err = db.QueryRow(fmt.Sprintf("SELECT EXISTS (SELECT 1 FROM pg_database WHERE datname = '%s')", dbName)).Scan(&dbExists)
