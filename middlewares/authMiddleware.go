@@ -1,6 +1,8 @@
 package middlewares
 
 import (
+	"database/sql"
+	"lorry-management/db"
 	"lorry-management/utils"
 	"net/http"
 
@@ -35,7 +37,27 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		var userID int
+
+		db, err := db.Connect()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		defer db.Close()
+		err = db.QueryRow("SELECT user_id FROM users WHERE email = $1", claims.Email).Scan(&userID)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve user ID: " + err.Error()})
+			}
+			c.Abort()
+			return
+		}
+
 		c.Set("email", claims.Email)
+		c.Set("id", userID)
 		c.Next()
 	}
 }

@@ -10,6 +10,7 @@ var jwtKey = []byte("your_secret_key")
 
 type JWTClaims struct {
 	Email string `json:"email"`
+	ID    int    `jsom:"id"`
 	jwt.StandardClaims
 }
 
