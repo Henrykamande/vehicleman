@@ -21,7 +21,7 @@ func Connect() (*sql.DB, error) {
 	defer db.Close() // Close the initial connection to the default database
 
 	// Create database if it does not exist
-	dbName := "lorry_managementtrial1"
+	dbName := "vehiclemandb"
 
 	var dbExists bool
 	err = db.QueryRow(fmt.Sprintf("SELECT EXISTS (SELECT 1 FROM pg_database WHERE datname = '%s')", dbName)).Scan(&dbExists)
