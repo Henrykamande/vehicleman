@@ -90,7 +90,7 @@ func Connect() (*sql.DB, error) {
     CONSTRAINT users_email_key UNIQUE (email)
 )`,
 
-		`CREATE TABLE IF NOT EXISTS public.user_profiles
+		`CREATE TABLE IF NOT EXISTS user_profiles
 (
     user_id integer NOT NULL,
     first_name character varying(50) COLLATE pg_catalog."default",
@@ -104,7 +104,7 @@ func Connect() (*sql.DB, error) {
         ON DELETE CASCADE
 )`,
 
-		`CREATE TABLE IF NOT EXISTS public.vehicles
+		`CREATE TABLE IF NOT EXISTS vehicles
 (
     vehicle_id integer NOT NULL DEFAULT nextval('lorries_lorry_id_seq'::regclass),
     make character varying(50) COLLATE pg_catalog."default" NOT NULL,
@@ -122,7 +122,7 @@ func Connect() (*sql.DB, error) {
 )
 `,
 
-		`CREATE TABLE IF NOT EXISTS public.subscriptions
+		`CREATE TABLE IF NOT EXISTS subscriptions
 (
     subscription_id integer NOT NULL DEFAULT nextval('subscriptions_subscription_id_seq'::regclass),
     user_id integer NOT NULL,
