@@ -69,7 +69,6 @@ func Connect() (*sql.DB, error) {
 
 	// Table schemas
 	tableSchemas := []string{
-		`GRANT CREATE ON SCHEMA public TO `,
 
 		`CREATE SEQUENCE IF NOT EXISTS users_user_id_seq;
 `,
