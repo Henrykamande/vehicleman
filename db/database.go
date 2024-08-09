@@ -42,7 +42,6 @@ func Connect() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer db.Close()
 	// Create database if it does not exist
 
 	var dbExists bool
@@ -59,6 +58,7 @@ func Connect() (*sql.DB, error) {
 			}
 		}
 	}
+	defer db.Close()
 
 	// Connect to the newly created database
 	connStr = fmt.Sprintf("postgresql://postgres:1234@localhost:5432/%s?sslmode=disable", dbName)
