@@ -69,6 +69,7 @@ func Connect() (*sql.DB, error) {
 
 	// Table schemas
 	tableSchemas := []string{
+		`GRANT CREATE ON SCHEMA public TO `,
 
 		`CREATE SEQUENCE IF NOT EXISTS users_user_id_seq;
 `,
@@ -99,7 +100,7 @@ func Connect() (*sql.DB, error) {
     address text COLLATE pg_catalog."default",
     CONSTRAINT user_profiles_pkey PRIMARY KEY (user_id),
     CONSTRAINT user_profiles_user_id_fkey FOREIGN KEY (user_id)
-        REFERENCES public.users (user_id) MATCH SIMPLE
+        REFERENCES users (user_id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE
 )`,
@@ -116,7 +117,7 @@ func Connect() (*sql.DB, error) {
     CONSTRAINT lorries_pkey PRIMARY KEY (vehicle_id),
     CONSTRAINT lorries_registration_number_key UNIQUE (registration_number),
     CONSTRAINT fk_owner FOREIGN KEY (owner_id)
-        REFERENCES public.users (user_id) MATCH SIMPLE
+        REFERENCES users (user_id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )
@@ -132,7 +133,7 @@ func Connect() (*sql.DB, error) {
     status character varying(20) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT subscriptions_pkey PRIMARY KEY (subscription_id),
     CONSTRAINT subscriptions_user_id_fkey FOREIGN KEY (user_id)
-        REFERENCES public.users (user_id) MATCH SIMPLE
+        REFERENCES users (user_id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE
 )
@@ -160,11 +161,11 @@ func Connect() (*sql.DB, error) {
 			expense_date date NOT NULL,
 			CONSTRAINT expenses_pkey PRIMARY KEY (expense_id),
 			CONSTRAINT expenses_category_id_fkey FOREIGN KEY (category_id)
-				REFERENCES public.expense_categories (category_id) MATCH SIMPLE
+				REFERENCES expense_categories (category_id) MATCH SIMPLE
 				ON UPDATE NO ACTION
 				ON DELETE CASCADE,
 			CONSTRAINT expenses_vehicle_id_fkey FOREIGN KEY (vehicle_id)
-				REFERENCES public.vehicles (vehicle_id) MATCH SIMPLE
+				REFERENCES pvehicles (vehicle_id) MATCH SIMPLE
 				ON UPDATE NO ACTION
 				ON DELETE CASCADE
 		)`,
