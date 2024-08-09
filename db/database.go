@@ -69,8 +69,10 @@ func Connect() (*sql.DB, error) {
 
 	// Table schemas
 	tableSchemas := []string{
+		`GRANT ALL PRIVILEGES ON DATABASE postgres TO vehiclemandb_user;
+`,
 
-		`CREATE SEQUENCE IF NOT EXISTS users_user_id_seq;
+		`CREATE SEQUENCE IF NOT EXISTS users_user_id_seq
 `,
 		`CREATE SEQUENCE IF NOT EXISTS  subscriptions_subscription_id_seq`,
 		`CREATE SEQUENCE IF NOT EXISTS  expenses_expense_id_seq`,
