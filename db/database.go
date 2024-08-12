@@ -167,7 +167,7 @@ func Connect() (*sql.DB, error) {
 				ON UPDATE NO ACTION
 				ON DELETE CASCADE,
 			CONSTRAINT expenses_vehicle_id_fkey FOREIGN KEY (vehicle_id)
-				REFERENCES pvehicles (vehicle_id) MATCH SIMPLE
+				REFERENCES vehicles (vehicle_id) MATCH SIMPLE
 				ON UPDATE NO ACTION
 				ON DELETE CASCADE
 		)`,
