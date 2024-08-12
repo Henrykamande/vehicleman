@@ -28,15 +28,16 @@ func Connect() (*sql.DB, error) {
 	}
 
 	// Get environment variables
-	dbUser := os.Getenv("DB_USER")
-	dbPassword := os.Getenv("DB_PASSWORD")
+	// dbUser := os.Getenv("DB_USER")
+	// dbPassword := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_NAME")
-	dbHost := os.Getenv("DB_HOST")
-	dbPort := os.Getenv("DB_PORT")
-	dbSSLMode := os.Getenv("DB_SSLMODE")
+	connStr := os.Getenv("db_url")
+	// dbHost := os.Getenv("DB_HOST")
+	// dbPort := os.Getenv("DB_PORT")
+	// dbSSLMode := os.Getenv("DB_SSLMODE")
 
 	// Initial connection string for the default database (usually `postgres`)
-	connStr := fmt.Sprintf("postgresql://%s:%s@%s:%s/postgres?sslmode=%s", dbUser, dbPassword, dbHost, dbPort, dbSSLMode)
+	// connStr := fmt.Sprintf("postgresql://%s:%s@%s:%s/postgres?sslmode=%s", dbUser, dbPassword, dbHost, dbPort, dbSSLMode)
 	// Connect to the default database
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
