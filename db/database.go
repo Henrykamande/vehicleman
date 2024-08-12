@@ -26,7 +26,7 @@ func Connect() (*sql.DB, error) {
 	}
 	// Create database if it does not exist
 
-	defer db.Close()
+	//defer db.Close()
 
 	tableSchemas := []string{
 		`GRANT ALL PRIVILEGES ON DATABASE postgres TO vehiclemandb_user;
