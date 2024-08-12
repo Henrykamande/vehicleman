@@ -13,62 +13,21 @@ import (
 // Connect handles connection to PostgreSQL, database creation, and table creation
 func Connect() (*sql.DB, error) {
 
-	// // Initial connection string for the default database (usually `postgres`)
-	// connStr := "postgresql://postgres:1234@localhost:5432/postgres?sslmode=disable"
-
-	// // Connect to the default database
-	// db, err := sql.Open("postgres", connStr)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// defer db.Close() // Close the initial connection to the default database
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 
-	// Get environment variables
-	// dbUser := os.Getenv("DB_USER")
-	// dbPassword := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
 	connStr := os.Getenv("db_url")
-	// dbHost := os.Getenv("DB_HOST")
-	// dbPort := os.Getenv("DB_PORT")
-	// dbSSLMode := os.Getenv("DB_SSLMODE")
 
-	// Initial connection string for the default database (usually `postgres`)
-	// connStr := fmt.Sprintf("postgresql://%s:%s@%s:%s/postgres?sslmode=%s", dbUser, dbPassword, dbHost, dbPort, dbSSLMode)
-	// Connect to the default database
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, err
 	}
 	// Create database if it does not exist
 
-	var dbExists bool
-	err = db.QueryRow(fmt.Sprintf("SELECT EXISTS (SELECT 1 FROM pg_database WHERE datname = '%s')", dbName)).Scan(&dbExists)
-	if err != nil {
-		return nil, err
-	}
-
-	if !dbExists {
-		_, err = db.Exec(fmt.Sprintf("CREATE DATABASE %s", dbName))
-		if err != nil {
-			if err.Error() != fmt.Sprintf("pq: database \"%s\" already exists", dbName) {
-				return nil, err
-			}
-		}
-	}
 	defer db.Close()
 
-	// Connect to the newly created database
-	// connStr = fmt.Sprintf("postgresql://postgres:1234@localhost:5432/%s?sslmode=disable", dbName)
-	// db, err = sql.Open("postgres", connStr)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// Table schemas
 	tableSchemas := []string{
 		`GRANT ALL PRIVILEGES ON DATABASE postgres TO vehiclemandb_user;
 `,
