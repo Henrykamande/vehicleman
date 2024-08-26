@@ -48,6 +48,6 @@ func Routers(r *gin.Engine) {
 		protected.GET("/totalincome/:id", controllers.GetTotalIncome)
 
 	}
-	r.Run(":8080")
+	r.Run(":3001")
 
 }
