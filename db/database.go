@@ -18,19 +18,19 @@ func Connect() (*sql.DB, error) {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 
-	dbHost := os.Getenv("DB_HOST")
-	dbPort := os.Getenv("DB_PORT")
-	dbUser := os.Getenv("DB_USER")
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
+	// dbHost := os.Getenv("DB_HOST")
+	// dbPort := os.Getenv("DB_PORT")
+	// dbUser := os.Getenv("DB_USER")
+	// dbPassword := os.Getenv("DB_PASSWORD")
+	// dbName := os.Getenv("DB_NAME")
 
-	// Construct the connection string
-	conntr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		dbHost, dbPort, dbUser, dbPassword, dbName)
+	// // Construct the connection string
+	// conntr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+	// 	dbHost, dbPort, dbUser, dbPassword, dbName)
 	// productio connection
-	//connStr := os.Getenv("db_url")
+	connStr := os.Getenv("db_url")
 
-	db, err := sql.Open("postgres", conntr)
+	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, err
 	}
