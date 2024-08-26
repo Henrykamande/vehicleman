@@ -13,7 +13,7 @@ import (
 )
 
 func CreateVehicle(c *gin.Context) {
-	_, exists := c.Get("email")
+	email, exists := c.Get("email")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
@@ -29,6 +29,14 @@ func CreateVehicle(c *gin.Context) {
 		return
 	}
 	defer db.Close()
+	emailStr, ok := email.(string)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to cast email to string"})
+		return
+	}
+	fmt.Println("Retrieved email:", emailStr) // Debugging line
+
+	vehicle.OwnerID, err = utils.GetOwnerID(db, emailStr)
 
 	query := `
 		INSERT INTO vehicles (make, model, year, registration_number, capacity, owner_id)
@@ -197,12 +205,19 @@ func DeleteVehicle(c *gin.Context) {
 // }
 
 func GetAllVehicles(c *gin.Context) {
-
-	_, exists := c.Get("email")
+	email, exists := c.Get("email")
+	print(email)
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
+	emailStr, ok := email.(string)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to cast email to string"})
+		return
+	}
+	fmt.Println("Retrieved email:", emailStr) // Debugging line
+
 	db, err := db.Connect()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -210,12 +225,22 @@ func GetAllVehicles(c *gin.Context) {
 	}
 	defer db.Close()
 
+	// Fetch the owner_id based on the email
+	var ownerID int
+	err = db.QueryRow("SELECT user_id FROM users WHERE email = $1", emailStr).Scan(&ownerID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve owner ID: " + err.Error()})
+		return
+	}
+	fmt.Println("Retrieved ownerID:", ownerID) // Debugging line
+
 	query := `
 		SELECT vehicle_id, make, model, year, registration_number, capacity, owner_id
 		FROM vehicles
+		WHERE owner_id = $1
 	`
 
-	rows, err := db.Query(query)
+	rows, err := db.Query(query, ownerID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve vehicles: " + err.Error()})
 		return

@@ -13,7 +13,10 @@ func main() {
 
 	fmt.Println(" +++++++++++++++++++++++++++++++++ step1")
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://vehicleman.onrender.com"},
+		AllowOrigins: []string{"http://localhost"},
+
+		//AllowOrigins:     []string{"https://vehicleman.onrender.com"},
+
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
 		ExposeHeaders:    []string{"Content-Length"},

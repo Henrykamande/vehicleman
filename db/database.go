@@ -18,9 +18,19 @@ func Connect() (*sql.DB, error) {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 
-	connStr := os.Getenv("db_url")
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
 
-	db, err := sql.Open("postgres", connStr)
+	// Construct the connection string
+	conntr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		dbHost, dbPort, dbUser, dbPassword, dbName)
+	// productio connection
+	//connStr := os.Getenv("db_url")
+
+	db, err := sql.Open("postgres", conntr)
 	if err != nil {
 		return nil, err
 	}
@@ -29,8 +39,8 @@ func Connect() (*sql.DB, error) {
 	//defer db.Close()
 
 	tableSchemas := []string{
-		`GRANT ALL PRIVILEGES ON DATABASE postgres TO vehiclemandb_user;
-`,
+		// 		`GRANT ALL PRIVILEGES ON DATABASE postgres TO vehiclemandb_user;
+		// `,
 
 		`CREATE SEQUENCE IF NOT EXISTS users_user_id_seq
 `,
@@ -154,3 +164,118 @@ func Connect() (*sql.DB, error) {
 
 	return db, nil
 }
+
+// ---------------Sqllit beging ---------------
+// import (
+// 	"database/sql"
+// 	"fmt"
+// 	"log"
+
+// 	"github.com/joho/godotenv"
+// 	_ "github.com/mattn/go-sqlite3"
+// )
+
+// // Connect handles connection to SQLite, database creation, and table creation
+// func Connect() (*sql.DB, error) {
+
+// 	err := godotenv.Load()
+// 	if err != nil {
+// 		log.Fatalf("Error loading .env file: %v", err)
+// 	}
+
+// 	dbName := "vehicle.db" // SQLite uses file-based databases
+
+// 	// Construct the connection string for SQLite
+// 	connStr := fmt.Sprintf("file:%s?cache=shared&mode=rwc", dbName)
+
+// 	db, err := sql.Open("sqlite3", connStr)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	tableSchemas := []string{
+// 		`CREATE TABLE IF NOT EXISTS users (
+// 			user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+// 			password TEXT NOT NULL,
+// 			email TEXT NOT NULL UNIQUE,
+// 			role TEXT NOT NULL,
+// 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+// 			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+// 			name TEXT
+// 		)`,
+
+// 		`CREATE TABLE IF NOT EXISTS user_profiles (
+// 			user_id INTEGER PRIMARY KEY,
+// 			first_name TEXT,
+// 			last_name TEXT,
+// 			phone_number TEXT,
+// 			address TEXT,
+// 			FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+// 		)`,
+
+// 		`CREATE TABLE IF NOT EXISTS vehicles (
+// 			vehicle_id INTEGER PRIMARY KEY AUTOINCREMENT,
+// 			make TEXT NOT NULL,
+// 			model TEXT NOT NULL,
+// 			year INTEGER NOT NULL,
+// 			registration_number TEXT NOT NULL UNIQUE,
+// 			capacity INTEGER NOT NULL,
+// 			owner_id INTEGER NOT NULL,
+// 			FOREIGN KEY (owner_id) REFERENCES users(user_id)
+// 		)`,
+
+// 		`CREATE TABLE IF NOT EXISTS subscriptions (
+// 			subscription_id INTEGER PRIMARY KEY AUTOINCREMENT,
+// 			user_id INTEGER NOT NULL,
+// 			plan_name TEXT NOT NULL,
+// 			start_date DATE NOT NULL,
+// 			end_date DATE NOT NULL,
+// 			status TEXT NOT NULL,
+// 			FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+// 		)`,
+
+// 		`CREATE TABLE IF NOT EXISTS Products (
+// 			ID INTEGER PRIMARY KEY AUTOINCREMENT,
+// 			Name TEXT NOT NULL,
+// 			Description TEXT,
+// 			Price DECIMAL(10, 2) NOT NULL,
+// 			CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+// 		)`,
+
+// 		`CREATE TABLE IF NOT EXISTS expense_categories (
+// 			category_id INTEGER PRIMARY KEY AUTOINCREMENT,
+// 			category_name TEXT NOT NULL
+// 		)`,
+
+// 		`CREATE TABLE IF NOT EXISTS expenses (
+// 			expense_id INTEGER PRIMARY KEY AUTOINCREMENT,
+// 			vehicle_id INTEGER NOT NULL,
+// 			category_id INTEGER NOT NULL,
+// 			amount DECIMAL(10, 2) NOT NULL,
+// 			description TEXT,
+// 			receipt TEXT,
+// 			expense_date DATE NOT NULL,
+// 			FOREIGN KEY (category_id) REFERENCES expense_categories(category_id) ON DELETE CASCADE,
+// 			FOREIGN KEY (vehicle_id) REFERENCES vehicles(vehicle_id) ON DELETE CASCADE
+// 		)`,
+
+// 		`CREATE TABLE IF NOT EXISTS incomes (
+// 			income_id INTEGER PRIMARY KEY AUTOINCREMENT,
+// 			vehicle_id INTEGER NOT NULL,
+// 			amount DECIMAL(10, 2) NOT NULL,
+// 			payment_date DATE NOT NULL,
+// 			status TEXT NOT NULL,
+// 			description TEXT,
+// 			FOREIGN KEY (vehicle_id) REFERENCES vehicles(vehicle_id)
+// 		)`,
+// 	}
+
+// 	for _, schema := range tableSchemas {
+// 		_, err = db.Exec(schema)
+// 		if err != nil {
+// 			return nil, fmt.Errorf("error creating table: %v", err)
+// 		}
+// 	}
+
+// 	return db, nil
+// }
